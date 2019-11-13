@@ -46,11 +46,11 @@ local step_incr = function(from, to, f)
   return step(from)
 end
 
-local program = function(incr)
-  return step_incr(1, incr, log)
+local program = function(iter)
+  return step_incr(1, iter, log)
 end
 
-return function(incr)
-  return run(handle(collect_log_handler(), program(incr)))
+return function(iter)
+  assert(#(run(handle(collect_log_handler(), program(iter)))[2]) == iter)
 end
 

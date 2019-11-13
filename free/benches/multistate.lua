@@ -14,7 +14,7 @@ local states do
   end
 end
 
-local S = states[1]
+local S = states[SIZE]
 local runState = S.run
 local get = S.get
 local modify = S.modify

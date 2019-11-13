@@ -26,11 +26,13 @@ local collect_log_handler = function()
 end
 
 local program = function(iter)
-  return collect_log_handler()(function()
+  local r = collect_log_handler()(function()
     for i = 1, iter do
       log(i)
     end
   end)
+
+  assert(#(r[2]) == iter)
 end
 
 return program
