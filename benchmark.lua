@@ -1,4 +1,4 @@
-local gettime, sleep do
+local gettime, sleep do -- {{{
   local ok, socket = pcall(require, 'socket')
 
   if not ok then
@@ -10,12 +10,12 @@ local gettime, sleep do
 
   gettime = socket.gettime
   sleep = socket.sleep
-end
+end -- }}}
 
 -- measurement {{{
 local BATCH_SIZE = tonumber(os.getenv('BATCH_SIZE') or 200)
 local MEDIAN_SIZE = tonumber(os.getenv('MEDIAN_SIZE') or 501)
-local QUOTIENT = tonumber(os.getenv('QUOTIENT') or 6)
+local QUOTIENT = tonumber(os.getenv('QUOTIENT') or 0)
 
 local measure1 = function(th)
   collectgarbage("collect")
@@ -41,42 +41,28 @@ end
 local measure = function(th)
   -- batchの中央値を取る
   local results = {}
+  batch(th)
 
   for _ = 1, MEDIAN_SIZE do
-    table.insert(results, batch(th))
+    local r = batch(th)
+    table.insert(results, r)
   end
 
-  if MEDIAN_SIZE % 2 == 0 then
-    return results[(MEDIAN_SIZE + 1) / 2]
+  if MEDIAN_SIZE % 2 == 1 then
+    return assert(results[(MEDIAN_SIZE + 1) / 2])
   else
-    return (results[MEDIAN_SIZE / 2] + results[MEDIAN_SIZE / 2 + 1]) / 2
+    return (
+          assert(results[MEDIAN_SIZE / 2])
+        + assert(results[MEDIAN_SIZE / 2 + 1])
+    ) / 2
   end
 end
 -- }}}
 
-local bench_app = function(app)
-  -- warm up
-  batch(app)
-
-  return measure(app)
-end
-
--- measure {{{
-package.path = package.path
-  .. ";./free/?.lua"
-  .. ";./ours/?.lua"
-
-local app_bench = function(path)
-  local app = require(path).main
-
-  return function()
-    return { label = path, result = bench_app(app) }
-  end
-end
 
 local mk_bench = function(label, fn, param)
   return function()
-    return { label = label, result = bench_app(function() return fn(param) end) }
+    return { label = label, result = measure(function() return fn(param) end) }
   end
 end
 
@@ -106,25 +92,63 @@ local run_benches = function(jobs)
   end
 end
 
--- }}}
-
 --- main {{{
-local freelooper = require('free/benches/looper')
+local free = {
+  looper = require('free/benches/looper'),
+  same_fringe = require('free/benches/same_fringe'),
+  state1 = require('free/benches/onestate'),
+  multistate = require('free/benches/multistate'),
+}
+
+local ours = {
+  looper = require('ours/benches/looper'),
+  same_fringe = require('ours/benches/same_fringe'),
+  state1 = require('ours/benches/onestate'),
+  multistate = require('ours/benches/multistate'),
+}
 
 run_benches {
   -- free
-  -- "free/benches/sample",
-  -- "free/benches/controls",
-  -- "free/benches/morecontrols",
-  mk_bench("free/loop5", freelooper, 10^5),
-  -- "free/benches/onestate",
-  -- "free/benches/multistate",
+  ---- looper
+  mk_bench("free/looper4", free.looper, 10^4),
+  mk_bench("free/looper5", free.looper, 10^5),
+  mk_bench("free/looper6", free.looper, 10^6),
+
+  ---- same_fringe
+  mk_bench("free/same_fringe4", free.same_fringe, 10^4),
+  mk_bench("free/same_fringe5", free.same_fringe, 10^5),
+  mk_bench("free/same_fringe6", free.same_fringe, 10^6),
+
+  ---- state
+  mk_bench("free/state4", free.state1, 10^4),
+  mk_bench("free/state5", free.state1, 10^5),
+  mk_bench("free/state6", free.state1, 10^6),
+
+  ---- multistate
+  mk_bench("free/mutistate", free.multistate, 10^2),
+  mk_bench("free/mutistate", free.multistate, 10^3),
+  mk_bench("free/mutistate", free.multistate, 10^4),
+
+
   -- ours
-  -- "ours/benches/sample",
-  -- "ours/benches/controls",
-  -- "ours/benches/morecontrols",
-  -- "ours/benches/for10_7",
-  -- "ours/benches/onestate",
-  -- "ours/benches/multistate",
+  ---- looper
+  mk_bench("ours/looper4", ours.looper, 10^4),
+  mk_bench("ours/looper5", ours.looper, 10^5),
+  mk_bench("ours/looper6", ours.looper, 10^6),
+
+  ---- same_fringe
+  mk_bench("ours/same_fringe4", ours.same_fringe, 10^4),
+  mk_bench("ours/same_fringe5", ours.same_fringe, 10^5),
+  mk_bench("ours/same_fringe6", ours.same_fringe, 10^6),
+
+  ---- state
+  mk_bench("ours/state4", ours.state1, 10^4),
+  mk_bench("ours/state5", ours.state1, 10^5),
+  mk_bench("ours/state6", ours.state1, 10^6),
+
+  ---- multistate
+  mk_bench("ours/mutistate", ours.multistate, 10^2),
+  -- not enough memory / stack overflow
+  -- mk_bench("ours/mutistate", ours.multistate, 10^3),
 }
 -- }}}

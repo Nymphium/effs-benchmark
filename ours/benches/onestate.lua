@@ -1,4 +1,4 @@
-local S = require('benches/state')()
+local S = require('ours/benches/data/state')()
 local get = S.get
 local modify = S.modify
 local runState = S.run

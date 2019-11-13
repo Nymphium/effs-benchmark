@@ -1,4 +1,4 @@
-local free = require('free')
+local free = require('free/free')
 local Return, Call
 Return = free.Return
 Call = free.Call

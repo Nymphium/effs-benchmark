@@ -1,42 +1,31 @@
-local free = require('free')
-local Return, Call, op
-Return = free.Return
-Call = free.Call
-op = free.op
-
-local eff = require('free_eff')
-local handle, run, inst, perform, perform_
+local eff = require('free/free_eff')
+local handle, run, inst, perform
 handle = eff.handle
 run = eff.run
 inst = eff.inst
 perform = eff.perform
-perform_ = eff.perform_
+
+local free = eff.free
+local Return, op
+Return = free.Return
+op = free.op
 
 -----
 
-local Double = inst()
-local Write = inst()
+local Log = inst()
+local log = function(msg)
+  return perform(Log, msg)
+end
 
-local with_double = {
-  val = Return,
-  [Double] = function(x, k)
-    return k(x * x)
-  end
-}
-
-local with_write = function()
-  local t = {}
+local collect_log_handler = function()
+  local msgs = {}
 
   return {
-    val = function(_)
-      for _, v in ipairs(t) do
-        -- print(v)
-      end
-
-      return Return()
+    val = function(v)
+      return Return({v, msgs})
     end,
-    [Write] = function(v, k)
-      table.insert(t, v)
+    [Log] = function(msg, k)
+      table.insert(msgs, msg)
       return k()
     end
   }
@@ -58,12 +47,10 @@ local step_incr = function(from, to, f)
 end
 
 local program = function(incr)
-  return step_incr(1, incr, function(v)
-    return perform(Write, v)
-  end)
+  return step_incr(1, incr, log)
 end
 
 return function(incr)
-  return run(handle(with_write(), program(incr)))
+  return run(handle(collect_log_handler(), program(incr)))
 end
 

@@ -1,9 +1,9 @@
-local eff = require('free_eff')
+local eff = require('free/free_eff')
 local free = eff.free
 local bind = free.op.bind
 local Return = free.Return
 
-local S = require('benches/state')()
+local S = require('free/benches/data/state')()
 local runState = S.run
 local get = S.get
 local modify = S.modify

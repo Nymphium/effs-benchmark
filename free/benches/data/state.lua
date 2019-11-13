@@ -1,16 +1,18 @@
-local free = require('free')
-local Return, Call, op
-Return = free.Return
-Call = free.Call
-op = free.op
-
-local eff = require('free_eff')
+local eff = require('free/free_eff')
 local handle, run, inst, perform, perform_
 handle = eff.handle
 run = eff.run
 inst = eff.inst
 perform = eff.perform
 perform_ = eff.perform_
+
+local free = eff.free
+local Return, Call, op
+Return = free.Return
+Call = free.Call
+op = free.op
+
+
 
 -----
 

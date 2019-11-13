@@ -1,7 +1,20 @@
-local S = require('benches/state')()
+local State = require('ours/benches/data/state')
+
+local SIZE = 10^5
+local states do
+  states = {}
+
+  for _ = 1, SIZE do
+    table.insert(states, State())
+  end
+end
+
+local S = states[SIZE]
 local get = S.get
 local modify = S.modify
 local runState = S.run
+
+-----
 
 local function count()
   local i = get()
@@ -13,7 +26,14 @@ local function count()
 end
 
 local main = function(n)
-  return runState(n, count)
+  local p = count
+  for i = 1, n - 1 do
+    local pp = p -- avoid recursive definition
+    p = function() return states[i].run(0, pp) end
+  end
+
+  return runState(10^3, p)
 end
 
 return main
+

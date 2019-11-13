@@ -1,47 +1,48 @@
-local eff = require('free_eff')
-local effrun = eff.run
+local eff = require('free/free_eff')
 local free = eff.free
-local Return, Call, op
-Return = free.Return
-Call = free.Call
-op = free.op
+local bind = free.op.bind
+local Return = free.Return
 
+local State = require('free/benches/data/state')
+  -- 充分な数のstateを作る
+local SIZE = 10^5
+local states do
+  states = {}
 
-local State = require('benches/state')
-
-local s do
-  s = {}
-
-  for i = 1, 10 do
-    s[i] = State()
+  for _ = 1, SIZE do
+    table.insert(states, State())
   end
 end
 
-return function()
-  local program = s[1].get() >> function(a)
-           return s[2].get() >> function(b)
-           return s[3].modify(function(c)
-             return a + b + c
-           end) >> function(_)
-           return s[3].get() >> function(c)
-           return s[4].get() >> function(d)
-           return s[5].get() >> function(e)
-           return s[6].modify(function(f)
-             return d + e + f
-           end) >> function(_)
-           return s[6].get() >> function(f)
-           return s[7].get() >> function(g)
-           return s[8].get() >> function(h)
-           return s[9].get() >> function(i)
-           return s[10].get() >> function(j)
-           return Return(a + b + c + d + e + f + g + h + i)
-     end end end end end end end end end end end end
+local S = states[1]
+local runState = S.run
+local get = S.get
+local modify = S.modify
 
-  local p = program
-  for i = 1, 10 do
-    p = s[i].run(i, p)
+-----
+
+local function count()
+  return bind(get(), function(i)
+    if i == 0 then
+      return Return(i)
+    else
+      return bind(modify(function(_) return i - 1 end), function()
+        return count()
+      end)
+    end
+  end)
+end
+
+local main = function(n)
+  local p = count()
+
+  for i = 1, n - 1 do
+    local pp = p
+    p = states[i].run(0, pp)
   end
 
-  return effrun(p)
+  return runState(10^3, p)
 end
+
+return main
 

@@ -1,4 +1,4 @@
-local eff = require('eff/src/eff')
+local eff = require('ours/eff/src/eff')
 local handler, inst, perform
 handler = eff.handler
 inst = eff.inst
@@ -6,36 +6,29 @@ perform = eff.perform
 
 ---
 
-local Double = inst()
-local Write = inst()
+local Log = inst()
+local log = function(msg)
+  return perform(Log, msg)
+end
 
-local with_double = handler {
-  val = function(v) return v end,
-  [Double] = function(x, k)
-    return k(x * x)
-  end
-}
+local collect_log_handler = function()
+  local msgs = {}
 
-local with_write = function()
-  local t = {}
-
-  return handler{
-    val = function()
-      for _, v in ipairs(t) do
-        -- print(v)
-      end
+  return handler {
+    val = function(v)
+      return {v, msgs}
     end,
-    [Write] = function(v, k)
-      table.insert(t, v)
+    [Log] = function(msg, k)
+      table.insert(msgs, msg)
       return k()
     end
   }
 end
 
 local program = function(iter)
-  return with_write()(function()
+  return collect_log_handler()(function()
     for i = 1, iter do
-      perform(Write, perform(Double, i))
+      log(i)
     end
   end)
 end
