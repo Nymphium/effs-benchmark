@@ -1,0 +1,4 @@
+[submodule "ours/eff"]
+	path = ours/eff
+	url = https://github.com/nymphium/eff.lua
+	branch = poc
