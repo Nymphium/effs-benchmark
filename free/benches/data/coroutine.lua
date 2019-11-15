@@ -14,17 +14,23 @@ local yield = function(v)
 end
 
 local create = function(f)
-  return { it = f }
+  return { it = f, wrapped = false }
 end
 
 local resume = function(co, v)
-  return handle({
-    val = Return,
-    [Yield] = function(u, k)
-      co.it = k
-      return Return(u)
-    end
-  }, co.it(v))
+  if co.wrapped then
+    return co.it(v)
+  else
+    co.wrapped = true
+
+    return handle({
+      val = Return,
+      [Yield] = function(u, k)
+        co.it = k
+        return Return(u)
+      end
+    }, co.it(v))
+  end
 end
 
 return {

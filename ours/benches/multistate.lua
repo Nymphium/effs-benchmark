@@ -32,7 +32,7 @@ local main = function(n)
     p = function() return states[i].run(0, pp) end
   end
 
-  return runState(10^3, p)
+  return runState(3000, p)
 end
 
 return main

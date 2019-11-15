@@ -9,13 +9,18 @@ end
 local function random_tree(nodes)
   local r = math.random(100)
 
-  local nodes_ = math.floor((nodes - 1) / 2)
-
-  if nodes == 0 then
+  if nodes == 1 then
     return Leaf(r)
-  else
-    return Node(random_tree(nodes_), random_tree(nodes_))
   end
+
+  local nodes_ = math.floor(nodes / 2)
+  local nodes__ = nodes_ + (nodes % 2)
+
+  if nodes_ == 0 then
+    return Leaf(r)
+  end
+
+  return Node(random_tree(nodes_), random_tree(nodes__))
 end
 
 local R = 10^10
