@@ -116,20 +116,20 @@ local native = {
 }
 
 ---- looper {{{
--- run_benches {
-  -- -- free
-  -- mk_bench("free/looper1", free.looper, 10^5 * 1),
-  -- mk_bench("free/looper2", free.looper, 10^5 * 2),
-  -- mk_bench("free/looper3", free.looper, 10^5 * 3),
-  -- mk_bench("free/looper4", free.looper, 10^5 * 4),
-  -- mk_bench("free/looper5", free.looper, 10^5 * 5),
-  -- -- ours
-  -- mk_bench("ours/looper1", ours.looper, 10^5 * 1),
-  -- mk_bench("ours/looper2", ours.looper, 10^5 * 2),
-  -- mk_bench("ours/looper3", ours.looper, 10^5 * 3),
-  -- mk_bench("ours/looper4", ours.looper, 10^5 * 4),
-  -- mk_bench("ours/looper5", ours.looper, 10^5 * 5),
--- }
+run_benches {
+  -- free
+  mk_bench("free/looper1", free.looper, 10^5 * 1),
+  mk_bench("free/looper2", free.looper, 10^5 * 2),
+  mk_bench("free/looper3", free.looper, 10^5 * 3),
+  mk_bench("free/looper4", free.looper, 10^5 * 4),
+  mk_bench("free/looper5", free.looper, 10^5 * 5),
+  -- ours
+  mk_bench("ours/looper1", ours.looper, 10^5 * 1),
+  mk_bench("ours/looper2", ours.looper, 10^5 * 2),
+  mk_bench("ours/looper3", ours.looper, 10^5 * 3),
+  mk_bench("ours/looper4", ours.looper, 10^5 * 4),
+  mk_bench("ours/looper5", ours.looper, 10^5 * 5),
+}
 -- }}}
 
 ---- same_fringe {{{
@@ -157,41 +157,41 @@ run_benches {
 -- }}}
 
 ---- state {{{
--- run_benches {
-  -- -- free
-  -- mk_bench("free/state1", free.state1, 10^5 * 1),
-  -- mk_bench("free/state2", free.state1, 10^5 * 2),
-  -- mk_bench("free/state3", free.state1, 10^5 * 3),
-  -- mk_bench("free/state4", free.state1, 10^5 * 4),
-  -- mk_bench("free/state5", free.state1, 10^5 * 5),
-  -- -- ours
-  -- mk_bench("ours/state1", ours.state1, 10^5 * 1),
-  -- mk_bench("ours/state2", ours.state1, 10^5 * 2),
-  -- mk_bench("ours/state3", ours.state1, 10^5 * 3),
-  -- mk_bench("ours/state4", ours.state1, 10^5 * 4),
-  -- mk_bench("ours/state5", ours.state1, 10^5 * 5),
-  -- }
-  -- -- }}}
+run_benches {
+  -- free
+  mk_bench("free/state1", free.state1, 10^5 * 1),
+  mk_bench("free/state2", free.state1, 10^5 * 2),
+  mk_bench("free/state3", free.state1, 10^5 * 3),
+  mk_bench("free/state4", free.state1, 10^5 * 4),
+  mk_bench("free/state5", free.state1, 10^5 * 5),
+  -- ours
+  mk_bench("ours/state1", ours.state1, 10^5 * 1),
+  mk_bench("ours/state2", ours.state1, 10^5 * 2),
+  mk_bench("ours/state3", ours.state1, 10^5 * 3),
+  mk_bench("ours/state4", ours.state1, 10^5 * 4),
+  mk_bench("ours/state5", ours.state1, 10^5 * 5),
+}
+-- }}}
 
-  -- ---- multistate {{{
--- run_benches {
-  -- -- free
-  -- mk_bench("free/mutistate1", free.multistate, 10 * 1),
-  -- mk_bench("free/mutistate2", free.multistate, 10 * 2),
-  -- mk_bench("free/mutistate3", free.multistate, 10 * 3),
-  -- mk_bench("free/mutistate4", free.multistate, 10 * 4),
-  -- mk_bench("free/mutistate5", free.multistate, 10 * 5),
-  -- -- not enough memory / stack overflow
-  -- -- mk_bench("free/mutistate", free.multistate, 10^4),
+---- multistate {{{
+run_benches {
+  -- free
+  mk_bench("free/mutistate1", free.multistate, 10 * 1),
+  mk_bench("free/mutistate2", free.multistate, 10 * 2),
+  mk_bench("free/mutistate3", free.multistate, 10 * 3),
+  mk_bench("free/mutistate4", free.multistate, 10 * 4),
+  mk_bench("free/mutistate5", free.multistate, 10 * 5),
+  -- not enough memory / stack overflow
+  -- mk_bench("free/mutistate", free.multistate, 10^4),
 
-  -- -- ours
-  -- mk_bench("ours/mutistate1", ours.multistate, 10 * 1),
-  -- mk_bench("ours/mutistate2", ours.multistate, 10 * 2),
-  -- mk_bench("ours/mutistate3", ours.multistate, 10 * 3),
-  -- mk_bench("ours/mutistate4", ours.multistate, 10 * 4),
-  -- mk_bench("ours/mutistate5", ours.multistate, 10 * 5),
-  -- -- mk_bench("ours/mutistate6", ours.multistate, 10^2 * 6),
-  -- -- not enough memory / stack overflow
-  -- -- mk_bench("ours/mutistate", ours.multistate, 10^3),
--- }
-  -- }}}
+  -- ours
+  mk_bench("ours/mutistate1", ours.multistate, 10 * 1),
+  mk_bench("ours/mutistate2", ours.multistate, 10 * 2),
+  mk_bench("ours/mutistate3", ours.multistate, 10 * 3),
+  mk_bench("ours/mutistate4", ours.multistate, 10 * 4),
+  mk_bench("ours/mutistate5", ours.multistate, 10 * 5),
+  -- mk_bench("ours/mutistate6", ours.multistate, 10^2 * 6),
+  -- not enough memory / stack overflow
+  -- mk_bench("ours/mutistate", ours.multistate, 10^3),
+}
+-- }}}
